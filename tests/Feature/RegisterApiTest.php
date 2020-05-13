@@ -16,7 +16,7 @@ class RegisterApiTest extends TestCase
 
     use RefreshDatabase;
 
-    public function should_新しいユーザーを作成して返却する()
+    public function 新しいユーザーを作成して返却する()
     {
         $data = [
             'name' => 'testUser',

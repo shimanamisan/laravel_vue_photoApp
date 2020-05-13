@@ -51,7 +51,7 @@ export default {
         name: "",
         email: "",
         password: "",
-        password_confirmation: "",
+        password_confirmation: ""
       }
     };
   },
@@ -59,8 +59,19 @@ export default {
     login() {
       console.log(this.loginForm);
     },
-    register() {
-      console.log(this.registerForm);
+    async register() {
+      // authストアのアクションを呼び出す
+      // Vue.use(Vuex)という記述をしているので、this.$storeでアクセスできる
+      await this.$store.dispatch("auth/register", this.registerForm);
+
+      // トップページへ遷移
+      this.$router.push("/");
+    },
+    async login() {
+      await this.$store.dispatch("auth/login", this.loginForm);
+
+      // トップページへ遷移
+      this.$router.push("/");
     }
   }
 };
