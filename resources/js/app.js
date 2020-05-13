@@ -14,15 +14,25 @@ import App from "./App.vue";
 //     template: "<h1>Hello Vue!</h1>"
 // });
 
-const createApp = async function() {
-    await store.dispatch("auth/currentUser");
+new Vue({
+    router,
+    store,
+    // renderではコンポーネントのオブジェクトを読み込んで描画することができる
+    render: h => h(App),
+    beforeCreate() {
+        store.dispatch("auth/currentUser");
+    }
+}).$mount("#app");
 
-    new Vue({
-        router,
-        store,
-        // renderではコンポーネントのオブジェクトを読み込んで描画することができる
-        render: h => h(App)
-    }).$mount("#app");
-};
+// const createApp = async function() {
+//     await store.dispatch("auth/currentUser");
 
-createApp();
+//     new Vue({
+//         router,
+//         store,
+//         // renderではコンポーネントのオブジェクトを読み込んで描画することができる
+//         render: h => h(App)
+//     }).$mount("#app");
+// };
+
+// createApp();
