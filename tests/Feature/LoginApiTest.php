@@ -29,7 +29,7 @@ class LoginApiTest extends TestCase
     /**
     * @test
     */
-    public function should_登録済みのユーザーを認証して返却する()
+    public function 登録済みのユーザーを認証して返却する()
     {
         $response = $this->json('POST', route('login'), [
             'email' => $this->user->email,

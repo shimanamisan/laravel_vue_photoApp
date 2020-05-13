@@ -2,7 +2,10 @@ const state = {
     user: null
 };
 
-const getters = {};
+const getters = {
+    check: state => !!state.user,
+    username: state => (state.user ? state.user.name : "") // userがnullの場合でもエラーにならないよう空文字を返す
+};
 
 const mutations = {
     setUser(state, user) {
@@ -22,6 +25,11 @@ const actions = {
     async logout({ commit }, data) {
         const response = await axios.post("/api/logout");
         commit("setUser", null);
+    },
+    async currentUser({ commit }) {
+        const response = await axios.get("/api/user");
+        const user = response.data || null;
+        commit("setUser", user);
     }
 };
 

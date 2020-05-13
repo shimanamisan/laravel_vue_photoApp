@@ -22,7 +22,7 @@ class LogoutApiTest extends TestCase
     /**
      * @test
      */
-    public function should_認証済みのユーザーをログアウトさせる()
+    public function 認証済みのユーザーをログアウトさせる()
     {
         $response = $this->actingAs($this->user)
                          ->json('POST', route('logout'));
