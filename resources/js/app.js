@@ -3,6 +3,9 @@ require("./bootstrap");
 import Vue from "vue";
 // VueRouterインスタンスをインポート
 import router from "./router";
+// ストアをインポート
+import store from "./store";
+
 // ルートコンポーネント
 import App from "./App.vue";
 
@@ -14,7 +17,7 @@ import App from "./App.vue";
 new Vue({
     el: "#app",
     router,
-
+    store,
     // renderではコンポーネントのオブジェクトを読み込んで描画することができる
     render: h => h(App)
 }).$mount("#app");
