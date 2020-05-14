@@ -4,6 +4,8 @@ import VueRouter from "vue-router";
 // ページコンポーネントをインポート（今後追加された時は追加していく）
 import PhotoList from "./page/PhotoList";
 import Login from "./page/Login";
+import SystemError from "./page/error/System";
+
 // ストアのユーザー情報を参照するために追加
 import store from "./store";
 
@@ -30,6 +32,10 @@ const routes = [
                 next();
             }
         }
+    },
+    {
+        path: "/500",
+        component: SystemError
     }
 ];
 

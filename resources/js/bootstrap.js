@@ -1,4 +1,4 @@
-window._ = require('lodash');
+window._ = require("lodash");
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -6,9 +6,18 @@ window._ = require('lodash');
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+window.axios = require("axios");
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+// interceptorsを使用することでエラーのレスポンスをまとめる事ができる
+window.axios.interceptors.response.use(
+    // 成功時のレスポンスはそのまま使う
+    response => response,
+    // エラー時のレスポンスはエラーメッセージそのものではなく、レスポンスオブジェクトを返すと言う処理が
+    // どのAPI呼び出し時でも共通だったので、インターセプターにまとめる
+    error => error.response || error
+);
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
