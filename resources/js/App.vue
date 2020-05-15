@@ -5,6 +5,7 @@
     </header>
     <main>
       <div class="container">
+        <Message />
         <!-- <RouterView/> -->
         <RouterView />
       </div>
@@ -14,12 +15,14 @@
 </template>
 
 <script>
+import Message from "./components/Message";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { INTERNAL_SERVER_ERROR } from "./util";
 
 export default {
   components: {
+    Message,
     Header,
     Footer
   },
@@ -29,12 +32,15 @@ export default {
     }
   },
   watch: {
+    // errorストアのエラーコードを常に監視している
+    // 500エラーがストアに代入されたらSystemエラーページへリダイレクトされる
     errorCode: {
       handler(val) {
         if (val === INTERNAL_SERVER_ERROR) {
           this.$router.push("/500").catch(error => {});
         }
       },
+      // コンポーネントが生成されたタイミングでも実行される
       immediate: true
     },
     $route() {

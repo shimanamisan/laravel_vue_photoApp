@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 // ページコンポーネントをインポート（今後追加された時は追加していく）
 import PhotoList from "./page/PhotoList";
 import Login from "./page/Login";
+import PhotoDetail from "./page/PhotoDetail";
 import SystemError from "./page/error/System";
 
 // ストアのユーザー情報を参照するために追加
@@ -17,7 +18,14 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: "/",
-        component: PhotoList
+        component: PhotoList,
+        // PhotoListコンポーネントのクエリパラメータにpageという値が、propsとして渡される
+        proprs: route => {
+            const page = route.query.page;
+            return {
+                page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1
+            };
+        }
     },
     {
         path: "/login",
@@ -34,6 +42,11 @@ const routes = [
         }
     },
     {
+        path: "/photos/:id", // :idは写真のIDが入る
+        component: PhotoDetail,
+        props: true // propsは写真のIDをpropsとして受け取ると言う意味
+    },
+    {
         path: "/500",
         component: SystemError
     }
@@ -42,7 +55,13 @@ const routes = [
 // インスタンスを生成
 const router = new VueRouter({
     mode: "history",
-    routes
+    routes,
+    scrollBehavior() {
+        return {
+            x: 0,
+            y: 0
+        };
+    }
 });
 
 // app.jsで読み込ませるためにインスタンスをエクスポート
