@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 // ページコンポーネントをインポート（今後追加された時は追加していく）
 import PhotoList from "./page/PhotoList";
 import Login from "./page/Login";
+import PhotoDetail from "./page/PhotoDetail";
 import SystemError from "./page/error/System";
 
 // ストアのユーザー情報を参照するために追加
@@ -32,6 +33,11 @@ const routes = [
                 next();
             }
         }
+    },
+    {
+        path: "/photos/:id", // :idは写真のIDが入る
+        component: PhotoDetail,
+        props: true // propsは写真のIDをpropsとして受け取ると言う意味
     },
     {
         path: "/500",

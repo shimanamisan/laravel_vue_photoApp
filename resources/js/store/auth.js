@@ -104,15 +104,19 @@ const actions = {
         // apiStatusを初期化
         commit("setApiStatus", null);
         const response = await axios.get("/api/user");
+        const user = response.data || null;
 
         // 通信が成功した時の処理
         if (response.status === OK) {
             commit("setApiStatus", true);
-            commit("setUser", null);
+            commit("setUser", user);
+            console.log("ステータス成功の時の処理");
             return false;
         }
         // const user = response.data || null;
         // commit("setUser", user);
+
+        console.log("ステータス成功じゃない時の処理");
 
         commit("setApiStatus", false);
         commit("error/setCode", response.status, { root: true });
