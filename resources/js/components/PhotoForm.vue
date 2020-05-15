@@ -1,7 +1,11 @@
 <template>
   <div v-show="value" class="photo-form">
     <h2 class="titl">Submit a Photo</h2>
-    <form class="form" @submit.prevent="submit">
+
+    <div class="panel" v-show="loading">
+      <Loader>Sending your Photo...</Loader>
+    </div>
+    <form class="form" @submit.prevent="submit" v-show="!loading">
       <div class="errors" v-if="errors">
         <ul v-if="erroes.photo">
           <li v-for="msg in erroes.photo" :key="msg">{{ msg }}</li>
@@ -20,7 +24,11 @@
 
 <script>
 import { CREATED, UNPROCESSABLE_ENTITY } from "../util";
+import Loader from "./Loader";
 export default {
+  components: {
+    Loader
+  },
   props: {
     value: {
       type: Boolean,
@@ -29,6 +37,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       preview: null,
       photo: null,
       errors: null
@@ -79,9 +88,15 @@ export default {
       this.$el.querySelector('input[type="file"]').value = null;
     },
     async submit() {
+      // 写真投稿時にローディング画面を表示
+      this.loading = true;
+
       const formData = new FormData();
       formData.append("photo", this.photo);
       const response = await axios.post("/api/photos", formData);
+
+      // ローディング画面を表示
+      this.loading = false;
 
       if (response.status === UNPROCESSABLE_ENTITY) {
         this.errors = response.data.errors;
@@ -95,6 +110,13 @@ export default {
         this.$store.commit("error/setCode", resopnse.status);
         return false;
       }
+
+      // 投稿が成功したらメッセージを表示
+      this.$store.commit("message/setContent", {
+        content: "写真が投稿されました",
+        timeout: 6000
+      });
+
       // 投稿が成功したら写真の詳細画面に遷移
       this.$router.push(`/photos/${response.data.id}`);
     }

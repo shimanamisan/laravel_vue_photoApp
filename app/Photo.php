@@ -4,11 +4,24 @@ namespace App;
 
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage; // ★
 
 class Photo extends Model
 {
     /** プライマリキーの型 */
     protected $keyType = 'string';
+
+    /* JSONに含める属性 */
+    // アクセサは定義しただけではモデルのJSON表現には現れない
+    // ユーザー定義のアクセサをJSON表現に含めるには、明示的に$appendsプロパティに登録する必要がある
+    protected $appends = [
+        'url'
+    ];
+
+    /** JSONに含める属性 */
+    protected $visible = [
+    'id', 'owner', 'url',
+    ];
 
     /** IDの桁数 */
     const ID_LENGTH = 12;
@@ -50,5 +63,26 @@ class Photo extends Model
         }
 
         return $id;
+    }
+
+    /**
+     * アクセサを定義
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        // クラウドストレージのurlメソッドは、S3上のファイルの公開URLを返す
+        // .envで定義したAWS_URLと引数のファイル名を結合した値になる
+        return Storage::cloud()->url($this->attributes['filename']);
+    }
+    
+    /**
+     * リレーションシップ - usersテーブル
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function owner() // リレーション先のモデル名と別名にしている
+    {
+        // モデル名と関係のない名前をつけた場合は、引数は省略せずに記述する必要がある
+        return $this->belongsTo('App\User', 'user_id', 'id', 'users');
     }
 }
