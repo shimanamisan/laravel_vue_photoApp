@@ -32,12 +32,15 @@ export default {
     }
   },
   watch: {
+    // errorストアのエラーコードを常に監視している
+    // 500エラーがストアに代入されたらSystemエラーページへリダイレクトされる
     errorCode: {
       handler(val) {
         if (val === INTERNAL_SERVER_ERROR) {
           this.$router.push("/500").catch(error => {});
         }
       },
+      // コンポーネントが生成されたタイミングでも実行される
       immediate: true
     },
     $route() {

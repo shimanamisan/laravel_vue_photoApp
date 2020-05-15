@@ -23,6 +23,9 @@ class Photo extends Model
     'id', 'owner', 'url',
     ];
 
+    // ページネーションの1ページあたりの表示数
+    protected $perPage = 3; 
+
     /** IDの桁数 */
     const ID_LENGTH = 12;
 

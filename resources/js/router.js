@@ -18,7 +18,14 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: "/",
-        component: PhotoList
+        component: PhotoList,
+        // PhotoListコンポーネントのクエリパラメータにpageという値が、propsとして渡される
+        proprs: route => {
+            const page = route.query.page;
+            return {
+                page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1
+            };
+        }
     },
     {
         path: "/login",
@@ -48,7 +55,13 @@ const routes = [
 // インスタンスを生成
 const router = new VueRouter({
     mode: "history",
-    routes
+    routes,
+    scrollBehavior() {
+        return {
+            x: 0,
+            y: 0
+        };
+    }
 });
 
 // app.jsで読み込ませるためにインスタンスをエクスポート
