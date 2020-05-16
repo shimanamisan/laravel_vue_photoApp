@@ -15,7 +15,7 @@ class PhotoController extends Controller
     {
         // 認証が必要、indexメソッドは写真一覧表示なので認証ミドルウェアの適用対象から外す
         // exceptメソッドで外せる
-        $this->middleware('auth')->except(['index', 'download']);
+        $this->middleware('auth')->except(['index', 'download', 'show']);
     }
 
     /**
@@ -89,5 +89,14 @@ class PhotoController extends Controller
         ];
 
         return response(Storage::cloud()->get($photo->filename), 200, $headers);
+    }
+
+    // 写真詳細
+    public function show(string $id) // 引数でパスパラメータIDを受け取っている
+    {  
+        $photo = Photo::where('id', $id)->with(['owner'])->first();
+
+        // 写真データが見つからなかった場合は404を返却
+        return $photo ?? abort(404);
     }
 }

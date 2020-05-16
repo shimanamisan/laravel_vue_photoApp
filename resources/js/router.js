@@ -48,7 +48,9 @@ const routes = [
     {
         path: "/photos/:id", // :idは写真のIDが入る
         component: PhotoDetail,
-        props: true // propsは写真のIDをpropsとして受け取ると言う意味
+        // propsは写真のIDをpropsとして受け取ると言う意味
+        // :idの値がこのコンポーネントのpropsとして渡される
+        props: true
     },
     {
         path: "/500",
