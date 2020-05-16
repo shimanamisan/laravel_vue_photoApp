@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePhoto;
 use App\Photo;
+use App\Comment; // ★
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreComment;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StorePhoto; // ★
 use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
@@ -94,9 +96,23 @@ class PhotoController extends Controller
     // 写真詳細
     public function show(string $id) // 引数でパスパラメータIDを受け取っている
     {  
-        $photo = Photo::where('id', $id)->with(['owner'])->first();
+        $photo = Photo::where('id', $id)->with(['owner', 'comments.author'])->first();
 
         // 写真データが見つからなかった場合は404を返却
         return $photo ?? abort(404);
+    }
+
+    // コメント投稿
+    public function addComment(Photo $photo, StoreComment $request)
+    {
+        $comment = new Comment();
+        $comment->content = $request->get('content');
+        $comment->user_id = Auth::user()->id;
+        $photo->comments()->save($comment);
+
+        // authorリレーションをロードするためにコメントを取得しなおす
+        $new_comment = Comment::where('id', $comment->id)->with('author')->first();
+
+        return response($new_comment, 201);
     }
 }

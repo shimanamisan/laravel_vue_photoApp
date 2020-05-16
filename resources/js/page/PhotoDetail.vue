@@ -14,12 +14,34 @@
       <h2 class="photo-detail__title">
         <i class="icon ion-md-chatboxes"></i>Comments
       </h2>
+      <ul v-if="photo.comments.length > 0" class="photo-detail__comments">
+        <li
+          v-for="comment in photo.comments"
+          :key="comment.content"
+          class="photo-detail__commentItem"
+        >
+          <p class="photo-detail__commentBody">{{ comment.content }}</p>
+          <p class="photo-detail__commentInfo">{{ comment.author.name }}</p>
+        </li>
+      </ul>
+      <p v-else>No comments yet.</p>
+      <form @submit.prevent="addComment" class="form" v-if="isLogin">
+        <div v-if="commentErrors" class="errors">
+          <ul v-if="commentErrors.content">
+            <li v-for="msg in commentErrors.content" :key="msg">{{ msg }}</li>
+          </ul>
+        </div>
+        <textarea class="form__item" v-model="commentContent"></textarea>
+        <div class="form__button">
+          <button type="submit" class="button button--inverse">submit comment</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import { OK } from "../util";
+import { OK, CREATED, UNPROCESSABLE_ENTITY } from "../util";
 
 export default {
   props: {
@@ -31,8 +53,15 @@ export default {
   data() {
     return {
       photo: null,
-      fullWidth: false // 写真を横幅いっぱいにするフラグ
+      fullWidth: false, // 写真を横幅いっぱいにするフラグ
+      commentContent: "",
+      commentErrors: null
     };
+  },
+  computed: {
+    isLogin() {
+      return this.$store.getters["auth/check"];
+    }
   },
   methods: {
     async fetchPhoto() {
@@ -44,6 +73,34 @@ export default {
       }
 
       this.photo = response.data;
+    },
+    async addComment() {
+      const response = await axios.post(`/api/photos/${this.id}/comments`, {
+        content: this.commentContent
+      });
+
+      // バリデーションエラー
+      if (response.status === UNPROCESSABLE_ENTITY) {
+        this.commentErrors = response.data.errors;
+        return false;
+      }
+
+      this.commentContent = "";
+      // エラーメッセージをクリア
+      this.commentErrors = null;
+
+      // その他のエラー
+      if (response.status !== CREATED) {
+        this.$store.commit("error/setCode", response.status);
+        return false;
+      }
+
+      // console.log(JSON.stringify(response.data));
+
+      // 新規投稿のコメントを、既存のコメントより上に表示させるために配列の順番を入れ替えている
+      this.photo.comments = [response.data, ...this.photo.comments];
+
+      console.log(this.photo.comments);
     }
   },
   watch: {

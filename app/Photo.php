@@ -20,7 +20,7 @@ class Photo extends Model
 
     /** JSONに含める属性 */
     protected $visible = [
-    'id', 'owner', 'url',
+    'id', 'owner', 'url', 'comments'
     ];
 
     // ページネーションの1ページあたりの表示数
@@ -87,5 +87,10 @@ class Photo extends Model
     {
         // モデル名と関係のない名前をつけた場合は、引数は省略せずに記述する必要がある
         return $this->belongsTo('App\User', 'user_id', 'id', 'users');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Comment')->orderBy('id', 'desc');
     }
 }

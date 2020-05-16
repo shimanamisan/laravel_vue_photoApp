@@ -31,5 +31,7 @@ Route::get('/photos', 'PhotoController@index')->name('photo.index');
 Route::get('/photos/{photo}/download', 'PhotoController@download');
 // 写真詳細
 Route::get('/photos/{id}', 'PhotoController@show')->name('photo.show');
+// コメント
+Route::post('/photos/{photo}/comments', 'PhotoController@addComment')->name('photo.comment');
 // ログインユーザーのチェック
 Route::get('/user', fn() => Auth::user())->name('user');
