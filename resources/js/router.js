@@ -20,9 +20,13 @@ const routes = [
         path: "/",
         component: PhotoList,
         // PhotoListコンポーネントのクエリパラメータにpageという値が、propsとして渡される
-        proprs: route => {
+        props: function(route) {
+            // propsに関数を指定する場合はその戻り値がpropsとしてページコンポーネントに渡される
+            // そしてその関数の引数はルート情報を表すroute
             const page = route.query.page;
+
             return {
+                // routeからクエリパラメータpageを取り出し、正規表現を使って整数と解釈されない値は1とみなして返却している
                 page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1
             };
         }
@@ -44,7 +48,9 @@ const routes = [
     {
         path: "/photos/:id", // :idは写真のIDが入る
         component: PhotoDetail,
-        props: true // propsは写真のIDをpropsとして受け取ると言う意味
+        // propsは写真のIDをpropsとして受け取ると言う意味
+        // :idの値がこのコンポーネントのpropsとして渡される
+        props: true
     },
     {
         path: "/500",

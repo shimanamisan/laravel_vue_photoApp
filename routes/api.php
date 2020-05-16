@@ -29,5 +29,7 @@ Route::post('/photos', 'PhotoController@create')->name('photo.create');
 Route::get('/photos', 'PhotoController@index')->name('photo.index');
 // 写真ダウンロード
 Route::get('/photos/{photo}/download', 'PhotoController@download');
+// 写真詳細
+Route::get('/photos/{id}', 'PhotoController@show')->name('photo.show');
 // ログインユーザーのチェック
 Route::get('/user', fn() => Auth::user())->name('user');
