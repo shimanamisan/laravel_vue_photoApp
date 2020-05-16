@@ -24,7 +24,7 @@ class Photo extends Model
     ];
 
     // ページネーションの1ページあたりの表示数
-    protected $perPage = 3; 
+    protected $perPage = 6; 
 
     /** IDの桁数 */
     const ID_LENGTH = 12;

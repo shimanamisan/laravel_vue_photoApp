@@ -33,14 +33,14 @@ export default {
   methods: {
     // 表示する写真のデータを取得
     async fetchPhootos() {
-      const response = await axios.get("/api/photos");
+      const response = await axios.get(`/api/photos/?page=${this.page}`);
 
       if (response.status !== OK) {
         this.$store.commit("error/setCode", response.status);
         return false;
       }
 
-      console.log(response.data);
+      // console.log(JSON.stringify(response.data));
 
       this.photos = response.data.data;
       this.currentPage = response.data.current_page;
@@ -52,6 +52,7 @@ export default {
     // ページが切り替わった時にfetchPhotosの処理が走る
     $route: {
       async handler() {
+        console.log("ページが切り替わっている");
         await this.fetchPhootos();
       },
       immediate: true
