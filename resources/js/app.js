@@ -16,6 +16,7 @@ new Vue({
     render: h => h(App),
     // Vueインスタンスが生成される前に、認証状態をVuexへ格納
     beforeCreate() {
+        console.log("beforeCreate!");
         store.dispatch("auth/currentUser");
     }
 }).$mount("#app");
