@@ -18,7 +18,7 @@
 import Message from "./components/Message";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { INTERNAL_SERVER_ERROR } from "./util";
+import { NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from "./util";
 
 export default {
   components: {
@@ -35,9 +35,18 @@ export default {
     // errorストアのエラーコードを常に監視している
     // 500エラーがストアに代入されたらSystemエラーページへリダイレクトされる
     errorCode: {
-      handler(val) {
+      async handler(val) {
         if (val === INTERNAL_SERVER_ERROR) {
-          this.$router.push("/500").catch(error => {});
+          this.$router.push("/500");
+        } else if (val === UNAUTHORIZED) {
+          // トークンをリフレッシュ
+          await axios.get("/api/refresh-token");
+          // ストアのuserをクリア
+          this.$store.commit("auth/setUser", null);
+          // ログイン画面へ
+          this.$router.push("/login");
+        } else if (val === NOT_FOUND) {
+          this.$router.push("/not-found");
         }
       },
       // コンポーネントが生成されたタイミングでも実行される
