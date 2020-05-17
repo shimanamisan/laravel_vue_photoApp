@@ -16,23 +16,34 @@ class PhotoDetailApiTest extends TestCase
      */
     public function 正しい構造のJSONを返却する()
     {
-        factory(Photo::class)->create();
-        
+        factory(Photo::class)->create()->each(function ($photo) {
+            $photo->comments()->saveMany(factory(Comment::class, 3)->make());
+        });
         $photo = Photo::first();
 
-        // $response = $this->json('GET', route('photo.show', ['id' => $photo->id,]));
-        $response = $this->json('GET', route('photo.show', ['id' => $photo->id]));
-
-        dd($this->json('GET', route('photo.show', ['id' => $photo->id])));
+        $response = $this->json('GET', route('photo.show', [
+            'id' => $photo->id,
+        ]));
 
         $response->assertStatus(200)
-            // GETしてきた情報のJSONのフォーマットを確かめている
             ->assertJsonFragment([
                 'id' => $photo->id,
                 'url' => $photo->url,
                 'owner' => [
                     'name' => $photo->owner->name,
                 ],
+                'comments' => $photo->comments
+                    ->sortByDesc('id')
+                    ->map(function ($comment) {
+                        return [
+                            'author' => [
+                                'name' => $comment->author->name,
+                            ],
+                            'content' => $comment->content,
+                        ];
+                    })->all(),
+                'liked_by_user' => false,
+                'likes_count' => 0,
             ]);
     }
 }

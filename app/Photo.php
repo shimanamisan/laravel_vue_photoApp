@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth; // ★
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage; // ★
 
@@ -15,12 +16,13 @@ class Photo extends Model
     // アクセサは定義しただけではモデルのJSON表現には現れない
     // ユーザー定義のアクセサをJSON表現に含めるには、明示的に$appendsプロパティに登録する必要がある
     protected $appends = [
-        'url'
+        'url', 'likes_count', 'liked_by_user',
     ];
 
-    /** JSONに含める属性 */
+    // JSONに含める属性
     protected $visible = [
-    'id', 'owner', 'url',
+    'id', 'owner', 'url', 'comments',
+    'likes_count', 'liked_by_user',
     ];
 
     // ページネーションの1ページあたりの表示数
@@ -87,5 +89,37 @@ class Photo extends Model
     {
         // モデル名と関係のない名前をつけた場合は、引数は省略せずに記述する必要がある
         return $this->belongsTo('App\User', 'user_id', 'id', 'users');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Comment')->orderBy('id', 'desc');
+    }
+
+    // likesテーブルを中間テーブルとした、photosテーブルとusersテーブルの多対多の関連性を表している
+    public function likes()
+    {   
+        // withTimestampsメソッドでlikesテーブルデータを挿入した時にcreated_at及びupdated_atカラムを更新させる
+        return $this->belongsToMany('App\User', 'likes')->withTimestamps();
+    }
+
+    // アクセサ
+    public function getLikesCountAttribute()
+    {
+        return $this->likes->count();
+    }
+
+    public function getLikedByUserAttribute()
+    {
+        if(Auth::guest()){
+            return false;
+        }
+
+        // コレクションメソッドのcontainsを使ってログインユーザーのIDと
+        // 合致するいいねが含まれているか調べている
+        // https://readouble.com/laravel/6.x/ja/eloquent-collections.html
+        return $this->likes->contains(function( $user ){
+            return $user->id === Auth::user()->id;
+        });
     }
 }

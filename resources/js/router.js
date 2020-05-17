@@ -6,9 +6,11 @@ import PhotoList from "./page/PhotoList";
 import Login from "./page/Login";
 import PhotoDetail from "./page/PhotoDetail";
 import SystemError from "./page/error/System";
+import NotFound from "./page/error/NotFound";
 
 // ストアのユーザー情報を参照するために追加
 import store from "./store";
+// import { NOT_FOUND } from "./util";
 
 // VueRouterプラグインを読み込む
 // そうすることで、RouterViewコンポーネントが使用できる
@@ -55,6 +57,12 @@ const routes = [
     {
         path: "/500",
         component: SystemError
+    },
+    {
+        // アスタリスクにすることで、定義されたルート以外のパスでは
+        // NotFoundが表示される
+        path: "*",
+        component: NotFound
     }
 ];
 
