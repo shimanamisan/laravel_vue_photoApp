@@ -36,10 +36,7 @@ const routes = [
     {
         path: "/login",
         component: Login,
-        beforEnter(from, to, next) {
-            console.log(from);
-            console.log(to);
-            console.log(next);
+        beforeEnter(to, from, next) {
             if (store.getters["auth/check"]) {
                 next("/");
             } else {

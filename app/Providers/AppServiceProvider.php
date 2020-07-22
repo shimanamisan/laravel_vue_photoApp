@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // マイグレーションにより生成されるデフォルトのインデックス用文字列長を
+        // 明示的に設定する必要がる（MySQLは5.7未満で必要な設定）
+        Schema::defaultStringLength(191);
     }
 }
